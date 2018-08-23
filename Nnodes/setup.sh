@@ -31,7 +31,7 @@ image=quorum
 
 nnodes=${#ips[@]}
 
-if [[ $nnodes < 2 ]]
+if [[ $nnodes -lt 2 ]]
 then
     echo "ERROR: There must be more than one node IP address."
     exit 1
@@ -73,7 +73,7 @@ do
     enode=`docker run -u $uid:$gid -v $pwd/$qd:/qdata $image sh -c "/usr/local/bin/bootnode -nodekeyhex $enode -writeaddress"`
 
     # Add the enode to static-nodes.json
-    sep=`[[ $n < $nnodes ]] && echo ","`
+    sep=`[[ $n -lt $nnodes ]] && echo ","`
     echo '  "enode://'$enode'@'$ip':30303?raftport=50400"'$sep >> static-nodes.json
 
     let n++
@@ -100,7 +100,7 @@ do
     account=`docker run -u $uid:$gid -v $pwd/$qd:/qdata $image /usr/local/bin/geth --datadir=/qdata/dd --password /qdata/passwords.txt account new | cut -c 11-50`
 
     # Add the account to the genesis block so it has some Ether at start-up
-    sep=`[[ $n < $nnodes ]] && echo ","`
+    sep=`[[ $n -lt $nnodes ]] && echo ","`
     cat >> genesis.json <<EOF
     "${account}": {
       "balance": "1000000000000000000000000000"

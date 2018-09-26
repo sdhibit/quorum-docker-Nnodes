@@ -25,7 +25,7 @@ subnet="172.13.0.0/16"
 ips=("172.13.0.2" "172.13.0.3" "172.13.0.4")
 
 # Docker image name
-image=quorum
+image=quorum-test
 
 ########################################################################
 
@@ -71,7 +71,7 @@ do
     # Generate the node's Enode and key
     enode=`docker run -u $uid:$gid -v $pwd/$qd:/qdata $image sh -c "/usr/local/bin/bootnode -genkey /qdata/dd/nodekey -writeaddress; cat /qdata/dd/nodekey"`
     enode=`docker run -u $uid:$gid -v $pwd/$qd:/qdata $image sh -c "/usr/local/bin/bootnode -nodekeyhex $enode -writeaddress"`
-
+  
     # Add the enode to static-nodes.json
     sep=`[[ $n -lt $nnodes ]] && echo ","`
     echo '  "enode://'$enode'@'$ip':30303?raftport=50400"'$sep >> static-nodes.json
@@ -134,10 +134,9 @@ n=1
 for ip in ${ips[*]}
 do
     sep=`[[ $ip != ${ips[0]} ]] && echo ","`
-    nodelist=${nodelist}${sep}'"http://'${ip}':9000/"'
+    nodelist=${nodelist}${sep}'{\"url\":\"http://'${ip}':9000/\"}'
     let n++
 done
-
 
 #### Complete each node's configuration ################################
 
@@ -148,16 +147,17 @@ for ip in ${ips[*]}
 do
     qd=qdata_$n
 
-    cat templates/tm.conf \
-        | sed s/_NODEIP_/${ips[$((n-1))]}/g \
-        | sed s%_NODELIST_%$nodelist%g \
-              > $qd/tm.conf
-
+    cat templates/tessera-config.json \
+        | sed s/__NODEIP__/${ips[$((n-1))]}/g \
+        | sed s%\"__NODELIST__\"%$nodelist%g \
+              > $qd/tessera-config.json
+              
     cp genesis.json $qd/genesis.json
     cp static-nodes.json $qd/dd/static-nodes.json
 
     # Generate Quorum-related keys (used by Constellation)
-    docker run -u $uid:$gid -v $pwd/$qd:/qdata $image /usr/local/bin/constellation-node --generatekeys=/qdata/keys/tm < /dev/null > /dev/null
+    
+    docker run -u $uid:$gid -v $pwd/$qd:/qdata $image java -jar /usr/local/bin/tessera.jar -keygen -filename /qdata/keys/tm
     echo 'Node '$n' public key: '`cat $qd/keys/tm.pub`
 
     cp templates/start-node.sh $qd/start-node.sh
@@ -166,7 +166,6 @@ do
     let n++
 done
 rm -rf genesis.json static-nodes.json
-
 
 #### Create the docker-compose file ####################################
 

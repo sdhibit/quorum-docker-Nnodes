@@ -42,7 +42,7 @@ fi
 uid=`id -u`
 gid=`id -g`
 pwd=`pwd`
-
+pwd='D:\Code\moog\quorum-docker-Nnodes\Nnodes'
 #### Create directories for each node's configuration ##################
 
 echo '[1] Configuring for '$nnodes' nodes.'
@@ -151,17 +151,19 @@ do
         | sed s/__NODEIP__/${ips[$((n-1))]}/g \
         | sed s%\"__NODELIST__\"%$nodelist%g \
               > $qd/tessera-config.json
-              
+
+    cp templates/keygen.sh $qd/keygen.sh          
     cp genesis.json $qd/genesis.json
     cp static-nodes.json $qd/dd/static-nodes.json
 
     # Generate Quorum-related keys (used by Constellation)
     
-    docker run -u $uid:$gid -v $pwd/$qd:/qdata $image java -jar /usr/local/bin/tessera.jar -keygen -filename /qdata/keys/tm
+    docker run -u $uid:$gid -v $pwd/$qd:/qdata $image /qdata/keygen.sh
     echo 'Node '$n' public key: '`cat $qd/keys/tm.pub`
 
     cp templates/start-node.sh $qd/start-node.sh
     chmod 755 $qd/start-node.sh
+    chmod +x $qd/start-node.sh
 
     let n++
 done
@@ -178,12 +180,12 @@ n=1
 for ip in ${ips[*]}
 do
     qd=qdata_$n
-
+    path="D:\Code\moog\quorum-docker-Nnodes\Nnodes\$qd"
     cat >> docker-compose.yml <<EOF
   node_$n:
     image: $image
     volumes:
-      - './$qd:/qdata'
+      - '$path:/qdata'
     networks:
       quorum_net:
         ipv4_address: '$ip'

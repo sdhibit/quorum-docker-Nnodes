@@ -18,7 +18,7 @@
    },
    "peer" : ["__NODELIST__"],
    "keys" : {
-      "passwords": [""],
+      "passwords": [],
       "keyData" : [ {
          "privateKeyPath" : "/qdata/tessera/qdata/keys/tm.key",
          "publicKeyPath" : "/qdata/tessera/qdata/keys/tm.pub"

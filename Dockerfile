@@ -55,6 +55,7 @@ RUN apt-get update \
  && add-apt-repository ppa:ethereum/ethereum \
  && apt-get update \
  && apt-get install -y --no-install-recommends \
+      curl \
       default-jre \
       libdb-dev \
       libleveldb-dev \
@@ -74,4 +75,4 @@ COPY --from=builder \
         /usr/local/bin/bootnode \
     /usr/local/bin/
 
-#CMD ["/qdata/start-node.sh"]
+CMD ["/qdata/start-node.sh"]

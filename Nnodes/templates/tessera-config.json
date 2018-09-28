@@ -2,10 +2,12 @@
    "type" : "config",
    "useWhiteList" : false,
    "jdbc" : {
-      "url" : "jdbc:h2:mem:tessera"
+        "username": "sa",
+        "password": "",
+        "url" : "jdbc:h2:mem:tessera"
    },
    "server" : {
-      "hostName" : "http://__NODEIP__",
+      "hostName" : "http://0.0.0.0",
       "port" : 9000,
       "sslConfig" : {
          "tls" : "OFF",
@@ -20,8 +22,8 @@
    "keys" : {
       "passwords": [],
       "keyData" : [ {
-         "privateKeyPath" : "/qdata/tessera/qdata/keys/tm.key",
-         "publicKeyPath" : "/qdata/tessera/qdata/keys/tm.pub"
+         "privateKeyPath" : "/qdata/keys/tm.key",
+         "publicKeyPath" : "/qdata/keys/tm.pub"
       } ]
    },
    "alwaysSendTo" : [ ],

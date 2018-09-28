@@ -21,11 +21,11 @@
 #### Configuration options #############################################
 
 # One Docker container will be configured for each IP address in $ips
-subnet="172.13.0.0/16"
-ips=("172.13.0.2" "172.13.0.3" "172.13.0.4")
+subnet="172.20.0.0/16"
+ips=("172.20.0.2" "172.20.0.3" "172.20.0.4")
 
 # Docker image name
-image=quorum-test
+image=quorum-tessera
 
 ########################################################################
 
@@ -42,7 +42,6 @@ fi
 uid=`id -u`
 gid=`id -g`
 pwd=`pwd`
-pwd='D:\Code\moog\quorum-docker-Nnodes\Nnodes'
 #### Create directories for each node's configuration ##################
 
 echo '[1] Configuring for '$nnodes' nodes.'
@@ -51,9 +50,8 @@ n=1
 for ip in ${ips[*]}
 do
     qd=qdata_$n
-    mkdir -p $qd/{logs,keys}
+    mkdir -p $qd/{logs,keys,tessera}
     mkdir -p $qd/dd/geth
-
     let n++
 done
 
@@ -118,7 +116,7 @@ cat >> genesis.json <<EOF
   },
   "difficulty": "0x0",
   "extraData": "0x",
-  "gasLimit": "0x2FEFD800",
+  "gasLimit": "0x2FEFD80000000",
   "mixhash": "0x00000000000000000000000000000000000000647572616c65787365646c6578",
   "nonce": "0x0",
   "parentHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
@@ -155,6 +153,7 @@ do
     cp templates/keygen.sh $qd/keygen.sh          
     cp genesis.json $qd/genesis.json
     cp static-nodes.json $qd/dd/static-nodes.json
+    chmod +x $qd/keygen.sh
 
     # Generate Quorum-related keys (used by Constellation)
     
@@ -180,12 +179,11 @@ n=1
 for ip in ${ips[*]}
 do
     qd=qdata_$n
-    path="D:\Code\moog\quorum-docker-Nnodes\Nnodes\$qd"
     cat >> docker-compose.yml <<EOF
   node_$n:
     image: $image
     volumes:
-      - '$path:/qdata'
+       - './$qd:/qdata'
     networks:
       quorum_net:
         ipv4_address: '$ip'

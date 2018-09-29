@@ -24,12 +24,18 @@ ARG QUORUM_BASEURL="https://github.com/jpmorganchase/quorum/archive"
 ARG QUORUM_PKGNAME="v${QUORUM_VERSION}.tar.gz"
 ARG QUORUM_URL="${QUORUM_BASEURL}/${QUORUM_PKGNAME}"
 
+ARG SOLC_VERSION=0.4.25
+ARG SOLC_BASEURL="https://github.com/ethereum/solidity/releases/download"
+ARG SOLC_PKGNAME="v${SOLC_VERSION}/solc-static-linux"
+ARG SOLC_URL="${SOLC_BASEURL}/${SOLC_PKGNAME}"
+
 ARG PATCH_URL="https://github.com/jpmorganchase/quorum/commit/bcf82ca2b9ac4bf78ede873a6230ece497e10052.patch"
 
 RUN mkdir quorum \
  && curl -kL ${TESSERA_URL} -o /usr/local/bin/tessera.jar \
  && curl -kL ${QUORUM_URL} | tar -xz -C quorum --strip-components=1 \
  && curl -kL ${PATCH_URL} -o quorum/fix_428.patch \
+ && curl -kL ${SOLC_URL} -o /usr/local/bin/solc \
  && cd quorum \
  && patch -p1 < fix_428.patch \
  && make all \
@@ -46,7 +52,7 @@ RUN apk --update upgrade \
  && apk --no-cache add \
   ca-certificates \
   curl \
-  openjdk8-jre-lib
+  openjdk8-jre-base
   
 
 
@@ -66,6 +72,7 @@ COPY --from=builder \
         /usr/local/bin/tessera.jar \
         /usr/local/bin/geth \
         /usr/local/bin/bootnode \
+        /usr/local/bin/solc \
     /usr/local/bin/
 
 CMD ["/qdata/start-node.sh"]

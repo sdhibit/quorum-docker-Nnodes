@@ -25,7 +25,7 @@ subnet="172.20.0.0/16"
 ips=("172.20.0.2" "172.20.0.3" "172.20.0.4")
 
 # Docker image name
-image=quorum-tessera
+image=alpine-quorum
 
 ########################################################################
 
@@ -157,7 +157,7 @@ do
 
     # Generate Quorum-related keys (used by Constellation)
     
-    docker run -u $uid:$gid -v $pwd/$qd:/qdata $image /qdata/keygen.sh
+    docker run -u $uid:$gid -v $pwd/$qd/qdata $image /qdata/keygen.sh
     echo 'Node '$n' public key: '`cat $qd/keys/tm.pub`
 
     cp templates/start-node.sh $qd/start-node.sh

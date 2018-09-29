@@ -153,6 +153,7 @@ do
     cp templates/keygen.sh $qd/keygen.sh          
     cp genesis.json $qd/genesis.json
     cp static-nodes.json $qd/dd/static-nodes.json
+    chmod 755 $qd/keygen.sh
     chmod +x $qd/keygen.sh
 
     # Generate Quorum-related keys (used by Constellation)

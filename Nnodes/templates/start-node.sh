@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 #
 # This is used at Container start up to run the constellation and geth nodes

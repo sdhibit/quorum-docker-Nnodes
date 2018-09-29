@@ -25,7 +25,7 @@ subnet="172.20.0.0/16"
 ips=("172.20.0.2" "172.20.0.3" "172.20.0.4")
 
 # Docker image name
-image=quorum-tessera
+image=alpine-quorum
 
 ########################################################################
 
@@ -153,6 +153,7 @@ do
     cp templates/keygen.sh $qd/keygen.sh          
     cp genesis.json $qd/genesis.json
     cp static-nodes.json $qd/dd/static-nodes.json
+    chmod 755 $qd/keygen.sh
     chmod +x $qd/keygen.sh
 
     # Generate Quorum-related keys (used by Constellation)

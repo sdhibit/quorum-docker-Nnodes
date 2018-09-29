@@ -46,10 +46,7 @@ RUN apk --update upgrade \
  && apk --no-cache add \
   ca-certificates \
   curl \
-  openjdk8-jre-lib
-  
-
-
+  openjdk8-jre-base
 
 #      curl \
 #      default-jre \

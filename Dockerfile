@@ -36,6 +36,8 @@ RUN mkdir quorum \
  && curl -kL ${QUORUM_URL} | tar -xz -C quorum --strip-components=1 \
  && curl -kL ${PATCH_URL} -o quorum/fix_428.patch \
  && curl -kL ${SOLC_URL} -o /usr/local/bin/solc \
+ && chmod 755 /usr/local/bin/solc \
+ && chmod +x /usr/local/bin/solc \
  && cd quorum \
  && patch -p1 < fix_428.patch \
  && make all \
@@ -47,26 +49,12 @@ RUN mkdir quorum \
 
 FROM alpine:3.8
 
-# Install add-apt-repository
+# Install apks
 RUN apk --update upgrade \
  && apk --no-cache add \
   ca-certificates \
   curl \
   openjdk8-jre-base
-  
-
-
-
-#      curl \
-#      default-jre \
-#      libdb-dev \
-#      libleveldb-dev \
-#      libsodium-dev \
-#      zlib1g-dev\
-#      libtinfo-dev \
-#      solc \
-# && rm -rf /var/lib/apt/lists/*
-
 
 COPY --from=builder \
         /usr/local/bin/tessera.jar \
